@@ -60,19 +60,11 @@
 			children = (
 				D78142BF21407DFE006E6053 /* Model */,
 				D78142C121407DFE006E6053 /* ModelController */,
-				D78142BD21407DFE006E6053 /* View */,
 				D78142C021407DFE006E6053 /* ViewController */,
 				D78142BE21407DFE006E6053 /* Resources */,
 				D78142AF21407DBC006E6053 /* Main.storyboard */,
 			);
 			path = "Why iOS?";
-			sourceTree = "<group>";
-		};
-		D78142BD21407DFE006E6053 /* View */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = View;
 			sourceTree = "<group>";
 		};
 		D78142BE21407DFE006E6053 /* Resources */ = {

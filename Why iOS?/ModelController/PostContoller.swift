@@ -17,19 +17,22 @@ class PostController {
     }
     
     var posts: [Post] = []
-    static let baseURL = URL(string: "https://whydidyouchooseios.firebaseio.com/reasons")
+    let baseURL = URL(string: "https://whydidyouchooseios.firebaseio.com/reasons")
     
     func putPost(name: String, reason: String, completion: @escaping (Bool) -> Void) {
         let post = Post(name: name, reason: reason)
-        guard let url = PostController.baseURL?.appendingPathExtension("json") else { return }
+        guard let url = baseURL else {fatalError("bad baseURL")}
+        let builtURL = url.appendingPathComponent(post.uuid).appendingPathExtension("json")
+        var request = URLRequest(url: builtURL)
         
-        var request = URLRequest(url: url)
-        request.httpMethod = HttpMethod.PUT.rawValue
-        do {
-            let data = try JSONEncoder().encode(post)
+        let jsonEncoder = JSONEncoder()
+        do{
+            let data = try jsonEncoder.encode(post)
+            request.httpMethod = "PUT"
             request.httpBody = data
-        } catch let error {
-            print("😳\nThere was an error in \(#function): \(error)\n\n\(error.localizedDescription)\n👿")
+        }catch let error {
+            print("🤮 Error putting with data task: \(error) \(error.localizedDescription)")
+            completion(false); return
         }
 
         URLSession.shared.dataTask(with: request) { (data, _, error) in
@@ -52,7 +55,7 @@ class PostController {
     
     func fetchPosts(completion: @escaping (_ success: Bool) -> Void) {
      
-        guard let url = PostController.baseURL?.appendingPathExtension("json") else { return }
+        guard let url = baseURL?.appendingPathExtension("json") else { return }
         
         var request = URLRequest(url: url)
         request.httpMethod = HttpMethod.GET.rawValue
@@ -65,8 +68,8 @@ class PostController {
                 guard let data = data
                     else { print("Bad request data"); completion(false); return }
                 
-                self.posts = try JSONDecoder().decode([Post].self, from: data)
-                //self.posts = postsDictionary.compactMap({ $0.value })
+                let postsDictionary = try JSONDecoder().decode([String : Post].self, from: data)
+                self.posts = postsDictionary.compactMap({ $0.value })
                 completion(true); return
             } catch let error {
                 print("😳\nThere was an error in \(#function): \(error)\n\n\(error.localizedDescription)\n👿")

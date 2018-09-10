@@ -23,8 +23,9 @@ class PostListViewController: UIViewController {
     }()
     
     lazy var refreshControl: UIRefreshControl = {
-        let view = UIRefreshControl()
-        return view
+        let control = UIRefreshControl()
+        control.addTarget(self, action: #selector(refreshPosts), for: .valueChanged)
+        return control
     }()
     
     lazy var addPostButton: UIButton = {
@@ -108,9 +109,9 @@ private extension PostListViewController {
             
             if success {
                 DispatchQueue.main.async {
-                    self.refreshControl.endRefreshing()
                     self.tableView.reloadData()
                     self.emptyState(isEmpty: false)
+                    self.refreshControl.endRefreshing()
                 }
             } else {
                 DispatchQueue.main.async {
@@ -176,6 +177,10 @@ private extension PostListViewController {
         } else {
             print("Slack not on device")
         }
+    }
+    
+    @objc func refreshPosts() {
+        performFetch()
     }
 }
 
